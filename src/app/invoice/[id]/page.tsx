@@ -24,10 +24,17 @@ export default function InvoiceDetailPage({
     tax,
     total,
     navigateHome,
+    loading,
   } = useInvoiceDetail(params);
 
+  if (loading) {
+    return (
+      <div className="container mx-auto py-10">Loading invoice data...</div>
+    );
+  }
+
   if (!invoice) {
-    return <div className="container mx-auto py-10">Loading...</div>;
+    return <div className="container mx-auto py-10">Invoice not found</div>;
   }
 
   return (

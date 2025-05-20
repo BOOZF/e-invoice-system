@@ -11,14 +11,37 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Eye } from "lucide-react";
-import { getAllInvoices } from "@/lib/invoice-storage";
+import { getAllInvoicesAction } from "@/lib/actions";
 
 export function InvoiceList() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    setInvoices(getAllInvoices());
+    async function loadInvoices() {
+      try {
+        setLoading(true);
+        const data = await getAllInvoicesAction();
+        setInvoices(data);
+      } catch (error) {
+        console.error("Failed to load invoices:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadInvoices();
   }, []);
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Loading invoices...</CardTitle>
+        </CardHeader>
+      </Card>
+    );
+  }
 
   if (invoices.length === 0) {
     return (

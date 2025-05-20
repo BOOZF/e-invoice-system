@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { saveInvoice } from "@/lib/invoice-storage";
+import { saveInvoiceAction } from "@/lib/actions";
 import { useToast } from "@/lib/use-toast";
 
 export function useCreateInvoice() {
   const router = useRouter();
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const [invoiceData, setInvoiceData] = useState<Invoice>({
     id: `INV-${Date.now()}`,
@@ -57,14 +58,32 @@ export function useCreateInvoice() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    saveInvoice(invoiceData);
-    toast({
-      title: "Invoice Created",
-      description: `Invoice ${invoiceData.id} has been created successfully.`,
-    });
-    router.push("/");
+    setIsSubmitting(true);
+
+    try {
+      const result = await saveInvoiceAction(invoiceData);
+      if (result.success) {
+        toast({
+          title: "Invoice Created",
+          description: `Invoice ${invoiceData.id} has been created successfully.`,
+        });
+        router.push("/");
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      console.error("Failed to create invoice:", error);
+      toast({
+        variant: "destructive",
+        title: "Error Creating Invoice",
+        description:
+          "There was a problem creating your invoice. Please try again.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const cancel = () => {
@@ -79,5 +98,6 @@ export function useCreateInvoice() {
     removeItem,
     handleSubmit,
     cancel,
+    isSubmitting,
   };
 }

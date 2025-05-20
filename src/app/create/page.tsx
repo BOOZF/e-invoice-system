@@ -23,6 +23,7 @@ export default function CreateInvoicePage() {
     removeItem,
     handleSubmit,
     cancel,
+    isSubmitting,
   } = useCreateInvoice();
 
   return (
@@ -191,10 +192,17 @@ export default function CreateInvoicePage() {
               </div>
             </CardContent>
             <CardFooter className="flex justify-end space-x-4">
-              <Button type="button" variant="outline" onClick={cancel}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={cancel}
+                disabled={isSubmitting}
+              >
                 Cancel
               </Button>
-              <Button type="submit">Create Invoice</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Creating..." : "Create Invoice"}
+              </Button>
             </CardFooter>
           </Card>
         </div>

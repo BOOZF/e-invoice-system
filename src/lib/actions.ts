@@ -1,6 +1,9 @@
-import { prisma } from "./prisma";
+"use server";
 
-export async function getAllInvoices(): Promise<Invoice[]> {
+import { prisma } from "./prisma";
+import { revalidatePath } from "next/cache";
+
+export async function getAllInvoicesAction(): Promise<Invoice[]> {
   try {
     const invoices = await prisma.invoice.findMany({
       include: { items: true },
@@ -15,7 +18,7 @@ export async function getAllInvoices(): Promise<Invoice[]> {
   }
 }
 
-export async function getInvoice(id: string): Promise<Invoice | null> {
+export async function getInvoiceAction(id: string): Promise<Invoice | null> {
   try {
     const invoice = await prisma.invoice.findUnique({
       where: { id },
@@ -31,7 +34,9 @@ export async function getInvoice(id: string): Promise<Invoice | null> {
   }
 }
 
-export async function saveInvoice(invoice: Invoice): Promise<void> {
+export async function saveInvoiceAction(
+  invoice: Invoice
+): Promise<{ success: boolean; error?: string }> {
   try {
     await prisma.invoice.upsert({
       where: { id: invoice.id },
@@ -72,20 +77,28 @@ export async function saveInvoice(invoice: Invoice): Promise<void> {
         },
       },
     });
+
+    revalidatePath("/");
+    return { success: true };
   } catch (error) {
     console.error(`Failed to save invoice ${invoice.id} to database`, error);
-    throw error;
+    return { success: false, error: String(error) };
   }
 }
 
-export async function deleteInvoice(id: string): Promise<void> {
+export async function deleteInvoiceAction(
+  id: string
+): Promise<{ success: boolean; error?: string }> {
   try {
     await prisma.invoice.delete({
       where: { id },
     });
+
+    revalidatePath("/");
+    return { success: true };
   } catch (error) {
     console.error(`Failed to delete invoice ${id} from database`, error);
-    throw error;
+    return { success: false, error: String(error) };
   }
 }
 

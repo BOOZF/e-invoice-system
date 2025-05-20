@@ -1,0 +1,33 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://postgres:postgres@localhost:5432/invoicedb?schema=public"
+}
+
+model Invoice {
+  id           String        @id
+  date         DateTime
+  dueDate      DateTime
+  clientName   String
+  clientEmail  String
+  clientAddress String
+  notes        String?
+  items        InvoiceItem[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model InvoiceItem {
+  id          Int      @id @default(autoincrement())
+  description String
+  quantity    Float
+  price       Float
+  invoiceId   String
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+} 
