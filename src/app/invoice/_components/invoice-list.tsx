@@ -17,7 +17,12 @@ export function InvoiceList() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
 
   useEffect(() => {
-    setInvoices(getAllInvoices());
+    const fetchInvoices = async () => {
+      const data = await getAllInvoices();
+      setInvoices(data);
+    };
+
+    fetchInvoices();
   }, []);
 
   if (invoices.length === 0) {

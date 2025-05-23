@@ -19,11 +19,11 @@ type InvoiceItemFormProps = {
   item: InvoiceItem;
   index: number;
   onChange: (
-    index: number,
-    field: keyof InvoiceItem,
-    value: string | number
+    _index: number,
+    _field: keyof InvoiceItem,
+    _value: string | number
   ) => void;
-  onRemove: (index: number) => void;
+  onRemove: (_index: number) => void;
 };
 
 type PageParams = {

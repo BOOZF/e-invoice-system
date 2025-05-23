@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ArrowLeft, Download, Trash } from "lucide-react";
+import { ArrowLeft, Trash } from "lucide-react";
 import { useInvoiceDetail } from "../_components/hooks";
 
 export default function InvoiceDetailPage({
@@ -19,7 +19,7 @@ export default function InvoiceDetailPage({
   const {
     invoice,
     handleDelete,
-    handleDownload,
+    // handleDownload,
     subtotal,
     tax,
     total,

@@ -103,7 +103,20 @@ export async function deleteInvoiceAction(
 }
 
 // Helper function to transform database model to application model
-function transformDatabaseInvoice(dbInvoice: any): Invoice {
+function transformDatabaseInvoice(dbInvoice: {
+  id: string;
+  date: Date;
+  dueDate: Date;
+  clientName: string;
+  clientEmail: string;
+  clientAddress: string;
+  notes: string | null;
+  items: Array<{
+    description: string;
+    quantity: number;
+    price: number;
+  }>;
+}): Invoice {
   return {
     id: dbInvoice.id,
     date: dbInvoice.date.toISOString().split("T")[0],
@@ -112,7 +125,7 @@ function transformDatabaseInvoice(dbInvoice: any): Invoice {
     clientEmail: dbInvoice.clientEmail,
     clientAddress: dbInvoice.clientAddress,
     notes: dbInvoice.notes || "",
-    items: dbInvoice.items.map((item: any) => ({
+    items: dbInvoice.items.map((item) => ({
       description: item.description,
       quantity: item.quantity,
       price: item.price,
